@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+   image: postgres:13
+   container_name: db
+   environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+   ports:
+    - "5432:5432"      # If you want to connect to the Postgres database from your host machine (e.g., using pgAdmin or psql)
+
+  
+
+  app-tier:
+    build: 
+      context: ./application-code/app-tier
+      dockerfile: Dockerfile
+    container_name: app-tier
+    ports:
+      - "3000:3000"
+    environment:    #Passes environment variables to backend app  to connect to the DB.
+      DB_HOST: db ${DB_HOST}
+      DB_USER: user ${DB_USER}
+      DB_PASSWORD: password ${DB_PASSWORD}
+      DB_NAME: myappdb ${DB_NAME}
+    
+    depends_on:
+          - db
+
+  web:
+    build: 
+      context: ./application-code/web-tier
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    
+    depends_on:
+       - app-tier
+
+
+
+
