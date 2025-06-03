@@ -21,10 +21,10 @@ services:
     ports:
       - "3000:3000"
     environment:    #Passes environment variables to backend app  to connect to the DB.
-      DB_HOST: db ${DB_HOST}
-      DB_USER: user ${DB_USER}
-      DB_PASSWORD: password ${DB_PASSWORD}
-      DB_NAME: myappdb ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_USER:  ${DB_USER}
+      DB_PASSWORD:  ${DB_PASSWORD}
+      DB_NAME:  ${DB_NAME}
     
     depends_on:
           - db
@@ -33,6 +33,7 @@ services:
     build: 
       context: ./application-code/web-tier
       dockerfile: Dockerfile
+    container_name: web-tier
     ports:
       - "80:80"
     
