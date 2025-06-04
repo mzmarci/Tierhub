@@ -76,7 +76,7 @@
                 body: JSON.stringify({"amount":this.state.text_amt, "desc" :this.state.text_desc})
             }
             
-            fetch('/api/transaction', requestOptions)
+            fetch('/http:localhost:4000/transaction', requestOptions)
             .then(response => response.json())
             .then(data => this.populateData())
             
