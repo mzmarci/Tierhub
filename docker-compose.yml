@@ -10,7 +10,7 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PWD}
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
 
   app-tier:
@@ -23,8 +23,8 @@ services:
     environment:    #Passes environment variables to backend app  to connect to the DB.
       DB_HOST: ${DB_HOST}
       DB_USER:  ${DB_USER}
-      DB_PASSWORD:  ${DB_PASSWORD}
-      DB_NAME:  ${DB_NAME}
+      DB_PWD:  ${DB_PWD}
+      DB_DATABASE:  ${DB_DATABASE}
     
     depends_on:
           - db
