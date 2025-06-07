@@ -25,3 +25,4 @@ CMD ["nginx", "-g", "daemon off;"]
 
 
 #In the web tier Dockerfile, i used a multi-stage build to first build the React app and then serve it using Nginx.
+# copied my nginx.cof file into mydockerfile
