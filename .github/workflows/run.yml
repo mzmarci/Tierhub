@@ -10,7 +10,7 @@ env:
   EC2_HOST: ${{ secrets.EC2_HOST }}
   EC2_USER: ec2-user
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  SONAR_HOST_URL: "http://<YOUR-SONARQUBE-SERVER>"
+  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
   COMPOSE_PROJECT_NAME: tierhub  # is used to group Docker Compose containers.
 
 jobs:
@@ -56,7 +56,7 @@ jobs:
         scanTimeout: '300'  # wait max 5 mins
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
     - name: Tag and Push Docker Images
       run: |
