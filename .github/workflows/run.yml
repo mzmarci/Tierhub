@@ -31,6 +31,13 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Install Docker Compose
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.7/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose version
+
+
     - name: Build Images from docker-compose
       run: docker-compose build      # Runs docker-compose build, which reads docker-compose.yml and builds the images for all services (like frontend, app, db).
 
@@ -57,7 +64,7 @@ jobs:
         docker tag tierhub_app-tier:latest $DOCKERHUB_USERNAME/tierhub_app-tier:latest
 
         docker push $DOCKERHUB_USERNAME/tierhub_web:latest
-        docker push $DOCKERHUB_USERNAME/tierhub_app:latest
+        docker push $DOCKERHUB_USERNAME/tierhub_app0tier:latest
 
     - name: Deploy to EC2 via SSH          # The name of the step
       uses: appleboy/ssh-action@v1.0.3      # Appleboy SSH GitHub Action — this is a popular action that lets one run commands on a remote server over SSH
