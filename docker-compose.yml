@@ -39,3 +39,39 @@ services:
     
     depends_on:
        - app-tier
+
+
+
+
+# Add image: fields to each service so you can easily tag and push them later.
+
+
+# services:
+#   db:
+#     image: $DOCKERHUB_USERNAME/tierhub_db:latest
+#     container_name: db
+#     ...
+
+#   app-tier:
+#     image: $DOCKERHUB_USERNAME/tierhub_app:latest
+#     build:
+#       context: ./application-code/app-tier
+#       dockerfile: Dockerfile
+#     container_name: app-tier
+#     ...
+
+#   web:
+#     image: $DOCKERHUB_USERNAME/tierhub_frontend:latest
+#     build:
+#       context: ./application-code/web-tier
+#       dockerfile: Dockerfile
+#     container_name: web-tier
+#     ...
+# Then your GitHub Actions can simply push without needing to tag:
+
+
+# - name: Push Docker Images
+#   run: |
+#     docker push $DOCKERHUB_USERNAME/tierhub_frontend:latest
+#     docker push $DOCKERHUB_USERNAME/tierhub_app:latest
+#     docker push $DOCKERHUB_USERNAME/tierhub_db:latest

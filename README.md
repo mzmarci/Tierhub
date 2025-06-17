@@ -129,4 +129,124 @@ Docker Compose networking
 
 Service dependency handling
 
+##   Taking Tierhub Further — CI/CD, Code Quality, and EC2 Deployment
+This project extends the Tierhub 3-tier app by automating the CI/CD process using GitHub Actions, pushing Docker images to an EC2 server, and integrating SonarQube for code quality analysis using a quality gate.
+
+##  What’s Implemented
+✅ GitHub Actions for CI/CD pipeline
+
+✅ Docker Compose to build and manage services
+
+✅ Docker Hub to store images
+
+✅ EC2 instance for hosting the app
+
+✅ SonarQube for static code analysis and quality gating
+
+✅ Infrastructure automated using Terraform modules (VPC, ALB, Security Groups, EC2)
+
+##  How It Works
+# GitHub Actions Workflow Explained
+- Workflow Trigger:
+- The pipeline runs whenever you push to the main branch.
+
+- Environment Setup:
+- Secrets and variables are defined for DockerHub login, EC2 credentials, and SonarQube config.
+
+- Pipeline Steps Include:
+
+- Checking out the repository
+
+- Building Docker images from docker-compose.yml
+
+- Running a SonarQube scan and waiting for the quality gate
+
+- Tagging and pushing Docker images to DockerHub
+
+- SSHing into the EC2 server to deploy the updated containers
+
+##  DockerHub Setup
+- To push Docker images to DockerHub:
+
+- Generate a DockerHub access token
+
+- Add your credentials to GitHub as secrets:
+
+- DOCKERHUB_USERNAME
+
+- DOCKERHUB_PASSWORD or DOCKERHUB_TOKEN
+
+###  SonarQube Integration (2 Options)
+# Option 1: Host SonarQube Yourself (on EC2)
+- Provision an EC2 instance (Amazon Linux 2 or Ubuntu)
+
+- Install Java 17 and download SonarQube:
+
+sudo yum update -y
+sudo yum install -y java-17-amazon-corretto
+cd /opt
+sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.4.1.88267.zip
+sudo unzip sonarqube-*.zip
+sudo mv sonarqube-10.4.1.88267 sonarqube
+
+- Create a system user for Sonar:
+sudo adduser sonar
+sudo chown -R sonar:sonar /opt/sonarqube
+
+- Create a systemd service:
+sudo tee /etc/systemd/system/sonarqube.service <<EOF
+[Unit]
+Description=SonarQube service
+After=syslog.target network.target
+
+[Service]
+Type=forking
+ExecStart=/opt/sonarqube/bin/linux-x86-64/sonar.sh start
+ExecStop=/opt/sonarqube/bin/linux-x86-64/sonar.sh stop
+User=sonar
+Group=sonar
+Restart=always
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+- sudo systemctl daemon-reload
+- sudo systemctl enable sonarqube
+- sudo systemctl start sonarqube
+
+- Allow TCP port 9000 on the EC2 security group to access SonarQube's web UI.
+
+- Get your SonarQube token from the UI (http://your-ec2-ip:9000) and store it in GitHub Secrets.
+
+- Update GitHub Actions with:
+
+SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+SONAR_HOST_URL: "http://<your-ec2-ip>:9000"
+
+### Option 2: Use SonarCloud (Recommended for Public Repos)
+- Visit https://sonarcloud.io
+
+- Log in with your GitHub account
+
+- Import your repository
+
+- Generate a token and add it to GitHub Secrets as SONAR_TOKEN
+
+- Use this in your workflow:
+
+SONAR_HOST_URL: "https://sonarcloud.io"
+
+### Deploying to EC2 from GitHub Actions
+- This step uses Appleboy's SSH GitHub Action to:
+
+- SSH into your EC2 instance using an SSH private key stored in GitHub Secrets.
+
+- Log in to DockerHub on the EC2 machine
+
+- Pull the updated images
+
+- Stop old containers and spin up the new ones using Docker Compose
+
 
