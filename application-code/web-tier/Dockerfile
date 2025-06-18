@@ -7,7 +7,8 @@ WORKDIR /app
 
 # Copy files and install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm install && chmod -R +x node_modules/.bin/     
+
 
 # Copy rest of the backend code
 COPY . .
