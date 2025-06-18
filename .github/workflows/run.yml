@@ -66,11 +66,11 @@ jobs:
 
     - name: Tag and Push Docker Images
       run: |
-        docker tag tierhub_web:latest $DOCKERHUB_USERNAME/tierhub_web:latest
-        docker tag tierhub_app-tier:latest $DOCKERHUB_USERNAME/tierhub_app-tier:latest
+        docker tag tierhub-web:latest $DOCKERHUB_USERNAME/tierhub-web:latest
+        docker tag tierhub-app-tier:latest $DOCKERHUB_USERNAME/tierhub-app-tier:latest
 
-        docker push $DOCKERHUB_USERNAME/tierhub_web:latest
-        docker push $DOCKERHUB_USERNAME/tierhub_app0tier:latest
+        docker push $DOCKERHUB_USERNAME/tierhub-web:latest
+        docker push $DOCKERHUB_USERNAME/tierhub-app0tier:latest
 
     - name: Deploy to EC2 via SSH          # The name of the step
       uses: appleboy/ssh-action@v1.0.3      # Appleboy SSH GitHub Action — this is a popular action that lets one run commands on a remote server over SSH
@@ -80,9 +80,9 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}     # This is the private SSH key, stored in GitHub Secrets, so the workflow can log into the EC2 instance without a password.
         script: |
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-          docker pull $DOCKERHUB_USERNAME/tierhub_web:latest
-          docker pull $DOCKERHUB_USERNAME/tierhub_app-tier:latest
-          docker pull $DOCKERHUB_USERNAME/tierhub_db:latest
+          docker pull $DOCKERHUB_USERNAME/tierhub-web:latest
+          docker pull $DOCKERHUB_USERNAME/tierhub-app-tier:latest
+          docker pull $DOCKERHUB_USERNAME/tierhub-db:latest
           cd /home/ec2-user/tierhub
           docker-compose down
           docker-compose up -d
