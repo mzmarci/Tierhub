@@ -9,6 +9,7 @@ env:
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN  }}
   EC2_HOST: ${{ secrets.EC2_HOST }}
   EC2_USER: ec2-user
+  EC2_SSH_KEY : ${{ secrets.EC2_SSH_KEY }} 
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
   COMPOSE_PROJECT_NAME: tierhub  # is used to group Docker Compose containers.
