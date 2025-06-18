@@ -41,13 +41,19 @@ jobs:
     - name: Build Images from docker-compose
       run: docker-compose build      # Runs docker-compose build, which reads docker-compose.yml and builds the images for all services (like frontend, app, db).
 
+
     - name: Run SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v5.0.0  #sonarsource/sonarqube-scan-action@v2
       with:
         projectBaseDir: .
+        args: >
+          -Dsonar.projectKey=my-project-key
+          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # This is sensitive information — like a password or API token. So it's stored securely as a GitHub secret in repository under: Settings → Secrets and variables → Actions → Secrets. This hides the value from logs and protects it from being exposed.
-        SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}  # This is not sensitive. It’s just a regular environment variable — the URL of your SonarQube server. You can define it once at the top of your workflow under env:  SONAR_HOST_URL: "http://your-sonarqube-server:9000"
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}  # This is not sensitive. It’s just a regular environment variable — the URL of your SonarQube server. You can define it once at the top of your workflow under env:  SONAR_HOST_URL: "http://your-sonarqube-server:9000"
 
     - name: Wait for SonarQube Quality Gate
       id: sonarqube-quality-gate-check

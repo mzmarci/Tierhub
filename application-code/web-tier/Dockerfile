@@ -41,7 +41,7 @@ CMD ["nginx", "-g", "daemon off;"]
 
 
 
-
+# the react was giving me issues so i changed my dockerfile
 # # Use nginx to serve the static site
 # FROM node:18-alpine as build
 
