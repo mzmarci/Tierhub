@@ -70,13 +70,13 @@ variable "db_instance_class" {
 variable "db_name" {
   description = "Name of the database"
   type        = string
-  default     = "reader"
+  default     = "Tierhub"
 }
 
 variable "db_username" {
   description = "Username for the database"
   type        = string
-  default     = "ReaderRDS"
+  default     = "TierhubRDS"
 }
 
 variable "engine" {
@@ -97,8 +97,8 @@ variable "engine_version" {
 #   default     = "reader_db"
 # }
 
-# variable "db_password" {
-#   description = "Database password"
-#   type        = string
-#   sensitive   = true
-# }
+variable "db_password" {
+  description = "Database password"
+  type        = string
+  sensitive   = true
+}

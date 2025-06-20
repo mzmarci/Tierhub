@@ -13,6 +13,12 @@ env:
   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
   COMPOSE_PROJECT_NAME: tierhub  # is used to group Docker Compose containers.
+  DB_PWD: ${{ secrets.DB_PWD }}      
+  DB_DATABASE:  ${{ secrets.DB_DATABASE }}
+  db_endpoint : ${{ secrets.db_endpoint}}   #RDS endpoint (like tierhub-db.xxxxxx.rds.amazonaws.com)
+  db_username : ${{ secrets.db_username }}   #RDS admin 
+  db_password : ${{ secrets.db_password  }}  #RDS password (match the Terraform config)
+  db_name : ${{ secrets. db_name }}   #Your RDS database name 
 
 jobs:
   build-test-deploy:
@@ -72,6 +78,33 @@ jobs:
 
         docker push $DOCKERHUB_USERNAME/tierhub-web:latest
         docker push $DOCKERHUB_USERNAME/tierhub-app-tier:latest
+    
+    - name: Export MySQL Dump from Docker Container   #This creates tierhub_dump.sql containing the full DB schema and data.
+      run: |
+        docker exec db sh -c 'exec mysqldump -uroot -p"$DB_PWD" $DB_DATABASE' > tierhub_dump.sql
+      env:
+        DB_PWD: ${{ secrets.DB_PWD }}      
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+
+    - name: Copy SQL Dump to EC2
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: "tierhub_dump.sql"
+        target: "/home/ec2-user/Tierhub"
+
+    - name: Import Dump into RDS from EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          sudo yum install -y mysql
+          mysql -h ${{ secrets.db_endpoint }} -P 3306 -u ${{ secrets.db_username }} -p${{ secrets.db_password }} ${{ secrets.db_name }} < /home/ec2-user/Tierhub/tierhub_dump.sql
+
 
     - name: Deploy to EC2 via SSH          # The name of the step
       uses: appleboy/ssh-action@v1.0.3      # Appleboy SSH GitHub Action — this is a popular action that lets one run commands on a remote server over SSH

@@ -33,3 +33,18 @@ module "load_balancer" {
   ami_id                    = var.ec2_ami
   instance_type             = var.ec2_instance_type
 }
+
+module "rds" {
+  source                 = "./module/rds"
+  db_identifier          = "tierhub-db-name"
+  db_name                = var.db_name
+  db_username            = var.db_username
+  db_password            = var.db_password
+  db_instance_class      = var.db_instance_class
+  allocated_storage      = var.db_allocated_storage
+  engine                 = var.engine
+  engine_version         = var.engine_version
+  vpc_security_group_ids = [module.security_group.rds_security_group_id]
+  subnet_id              = module.mainvpc.private_subnets_id
+  multi_az               = true
+}

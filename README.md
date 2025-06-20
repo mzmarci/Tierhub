@@ -249,3 +249,11 @@ SONAR_HOST_URL: "https://sonarcloud.io"
 
 - Stop old containers and spin up the new ones using Docker Compose
 
+
+### To Ensure Peristenet Storage
+
+- Local Database was migrated to AWS RDS which ensures automated backups, replication (multi-AZ), and data durability.
+
+### to Ensure Service Availability  [optional]
+
+- Use Docker Compose with Restart Policy
