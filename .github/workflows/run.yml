@@ -84,7 +84,10 @@ jobs:
           echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker pull $DOCKERHUB_USERNAME/tierhub-web:latest
           docker pull $DOCKERHUB_USERNAME/tierhub-app-tier:latest
-          docker pull $DOCKERHUB_USERNAME/tierhub-db:latest
-          cd /home/ec2-user/Tierhub
+
+          cd /home/ec2-user
+          git clone https://github.com/mzmarci/Tierhub.git
+          cd Tierhub
+
           docker-compose down
           docker-compose up -d
