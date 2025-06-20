@@ -80,10 +80,10 @@ jobs:
         username: ec2-user
         key: ${{ secrets.EC2_SSH_KEY }}     # This is the private SSH key, stored in GitHub Secrets, so the workflow can log into the EC2 instance without a password.
         script: |
-          docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+          docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
           docker pull $DOCKERHUB_USERNAME/tierhub-web:latest
           docker pull $DOCKERHUB_USERNAME/tierhub-app-tier:latest
           docker pull $DOCKERHUB_USERNAME/tierhub-db:latest
-          cd /home/ec2-user/tierhub
+          cd /home/ec2-user/Tierhub
           docker-compose down
           docker-compose up -d
