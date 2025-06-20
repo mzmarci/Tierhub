@@ -79,6 +79,28 @@ jobs:
         docker push $DOCKERHUB_USERNAME/tierhub-web:latest
         docker push $DOCKERHUB_USERNAME/tierhub-app-tier:latest
     
+
+    - name: Deploy to EC2 via SSH          # The name of the step
+      uses: appleboy/ssh-action@v1.0.3      # Appleboy SSH GitHub Action — this is a popular action that lets one run commands on a remote server over SSH
+      with:
+        host: ${{ secrets.EC2_HOST }}    # this is the public ip of my instance i.e the DNS name of the instance
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}     # This is the private SSH key, stored in GitHub Secrets, so the workflow can log into the EC2 instance without a password.
+        envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN
+        script: |
+          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker pull $DOCKERHUB_USERNAME/tierhub-web:latest
+          docker pull $DOCKERHUB_USERNAME/tierhub-app-tier:latest
+
+          cd /home/ec2-user
+          git clone https://github.com/mzmarci/Tierhub.git
+          cd Tierhub
+
+          docker-compose down
+          docker-compose up -d
+
+
+
     # - name: Export MySQL Dump from Docker Container   #This creates tierhub_dump.sql containing the full DB schema and data.
     #   run: |
     #     docker exec db sh -c 'exec mysqldump -uroot -p"$DB_PWD" $DB_DATABASE' > tierhub_dump.sql
@@ -105,22 +127,3 @@ jobs:
     #       sudo yum install -y mysql
     #       mysql -h ${{ secrets.db_endpoint }} -P 3306 -u ${{ secrets.db_username }} -p${{ secrets.db_password }} ${{ secrets.db_name }} < /home/ec2-user/Tierhub/tierhub_dump.sql
 
-
-    - name: Deploy to EC2 via SSH          # The name of the step
-      uses: appleboy/ssh-action@v1.0.3      # Appleboy SSH GitHub Action — this is a popular action that lets one run commands on a remote server over SSH
-      with:
-        host: ${{ secrets.EC2_HOST }}    # this is the public ip of my instance i.e the DNS name of the instance
-        username: ec2-user
-        key: ${{ secrets.EC2_SSH_KEY }}     # This is the private SSH key, stored in GitHub Secrets, so the workflow can log into the EC2 instance without a password.
-        envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN
-        script: |
-          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          docker pull $DOCKERHUB_USERNAME/tierhub-web:latest
-          docker pull $DOCKERHUB_USERNAME/tierhub-app-tier:latest
-
-          cd /home/ec2-user
-          git clone https://github.com/mzmarci/Tierhub.git
-          cd Tierhub
-
-          docker-compose down
-          docker-compose up -d

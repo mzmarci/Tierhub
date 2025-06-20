@@ -252,7 +252,7 @@ SONAR_HOST_URL: "https://sonarcloud.io"
 
 ### To Ensure Peristenet Storage
 
-- Local Database was migrated to AWS RDS which ensures automated backups, replication (multi-AZ), and data durability.
+- Local Database should be migrated to AWS RDS which ensures automated backups, replication (multi-AZ), and data durability.
 
 ### to Ensure Service Availability  [optional]
 
