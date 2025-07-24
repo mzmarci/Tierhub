@@ -182,16 +182,22 @@ This project extends the Tierhub 3-tier app by automating the CI/CD process usin
 
 - Install Java 17 and download SonarQube:
 
-sudo yum update -y
-sudo yum install -y java-17-amazon-corretto
-cd /opt
-sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.4.1.88267.zip
-sudo unzip sonarqube-*.zip
-sudo mv sonarqube-10.4.1.88267 sonarqube
+- sudo yum update -y
+
+- sudo yum install -y java-17-amazon-corretto
+
+- cd /opt
+
+- sudo wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-10.4.1.88267.zip
+
+- sudo unzip sonarqube-*.zip
+
+- sudo mv sonarqube-10.4.1.88267 sonarqube
 
 - Create a system user for Sonar:
-sudo adduser sonar
-sudo chown -R sonar:sonar /opt/sonarqube
+. sudo adduser sonar
+
+. sudo chown -R sonar:sonar /opt/sonarqube
 
 - Create a systemd service:
 sudo tee /etc/systemd/system/sonarqube.service <<EOF
@@ -213,7 +219,9 @@ WantedBy=multi-user.target
 EOF
 
 - sudo systemctl daemon-reload
+
 - sudo systemctl enable sonarqube
+
 - sudo systemctl start sonarqube
 
 - Allow TCP port 9000 on the EC2 security group to access SonarQube's web UI.
